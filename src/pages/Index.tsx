@@ -37,17 +37,46 @@ interface Trade {
   profit: number;
 }
 
+const API_URL = 'https://functions.poehali.dev/24b81368-a7c8-4d5b-8ddc-d78dee6bf3ad';
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  const mockAssets: Asset[] = [
-    { id: '1', name: 'Apple Inc.', symbol: 'AAPL', price: 178.25, change: 2.45, changePercent: 1.39, volume: '52.3M', type: 'stock' },
-    { id: '2', name: 'Tesla', symbol: 'TSLA', price: 242.84, change: -5.12, changePercent: -2.07, volume: '98.7M', type: 'stock' },
-    { id: '3', name: 'Bitcoin', symbol: 'BTC', price: 43250.00, change: 1250.00, changePercent: 2.98, volume: '$28.5B', type: 'crypto' },
-    { id: '4', name: 'Ethereum', symbol: 'ETH', price: 2285.50, change: -45.30, changePercent: -1.94, volume: '$12.8B', type: 'crypto' },
-    { id: '5', name: 'Microsoft', symbol: 'MSFT', price: 378.91, change: 4.23, changePercent: 1.13, volume: '24.1M', type: 'stock' },
-    { id: '6', name: 'Solana', symbol: 'SOL', price: 98.75, change: 8.45, changePercent: 9.35, volume: '$2.1B', type: 'crypto' },
-  ];
+  const fetchMarketData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}?symbols=BTC,ETH,SOL,AAPL,TSLA,MSFT`);
+      const data = await response.json();
+      
+      if (data.data && Array.isArray(data.data)) {
+        const formattedAssets = data.data.map((item: any, index: number) => ({
+          id: String(index + 1),
+          name: item.name,
+          symbol: item.symbol,
+          price: item.price,
+          change: item.change,
+          changePercent: item.changePercent,
+          volume: item.volume,
+          type: item.type
+        }));
+        setAssets(formattedAssets);
+        setLastUpdate(new Date());
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки данных:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMarketData();
+    const interval = setInterval(fetchMarketData, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const mockPredictions: Prediction[] = [
     {
