@@ -1,0 +1,16 @@
+{
+  "tests": [
+    {
+      "name": "Get market data for default symbols",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "Get market data for specific symbols",
+      "method": "GET",
+      "path": "/?symbols=BTC,ETH,AAPL",
+      "expectedStatus": 200
+    }
+  ]
+}
