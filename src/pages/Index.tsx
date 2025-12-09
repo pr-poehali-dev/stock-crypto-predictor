@@ -136,8 +136,11 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm">
-                <Icon name="Settings" size={18} />
+              <div className="text-sm text-muted-foreground mr-4">
+                Обновлено: {lastUpdate.toLocaleTimeString('ru-RU')}
+              </div>
+              <Button variant="ghost" size="sm" onClick={fetchMarketData} disabled={loading}>
+                <Icon name="RefreshCw" size={18} className={loading ? 'animate-spin' : ''} />
               </Button>
               <Button variant="ghost" size="sm">
                 <Icon name="Bell" size={18} />
@@ -172,7 +175,7 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground">Всего активов</p>
                   <Icon name="Briefcase" className="text-primary" size={20} />
                 </div>
-                <p className="text-3xl font-bold">{mockAssets.length}</p>
+                <p className="text-3xl font-bold">{assets.length}</p>
                 <p className="text-xs text-muted-foreground mt-1">3 акции • 3 крипто</p>
               </Card>
 
@@ -199,6 +202,7 @@ const Index = () => {
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold">Активы в портфеле</h2>
                 <div className="flex gap-2">
+                  {loading && <span className="text-sm text-muted-foreground">Загрузка...</span>}
                   <Button variant="outline" size="sm">
                     <Icon name="Filter" size={16} className="mr-2" />
                     Фильтр
@@ -207,7 +211,7 @@ const Index = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {mockAssets.map((asset) => (
+                {assets.map((asset) => (
                   <Card
                     key={asset.id}
                     className="p-5 bg-card border-border hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group"
